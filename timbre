@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Timbre QR</title>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 50px; }
+    button { font-size: 20px; padding: 15px; }
+  </style>
+</head>
+<body>
+
+<h2>🔔 Timbre</h2>
+<p id="estado">Verificando ubicación...</p>
+<button id="btn" disabled onclick="tocar()">Tocar timbre</button>
+
+<script>
+const casaLat = -37.321; // CAMBIAR
+const casaLon = -59.134; // CAMBIAR
+const radio = 30; // metros
+
+function distancia(lat1, lon1, lat2, lon2){
+  const R = 6371e3;
+  const φ1 = lat1 * Math.PI/180;
+  const φ2 = lat2 * Math.PI/180;
+  const Δφ = (lat2-lat1) * Math.PI/180;
+  const Δλ = (lon2-lon1) * Math.PI/180;
+
+  const a = Math.sin(Δφ/2)**2 +
+            Math.cos(φ1)*Math.cos(φ2) *
+            Math.sin(Δλ/2)**2;
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+navigator.geolocation.getCurrentPosition(pos => {
+  const d = distancia(
+    casaLat, casaLon,
+    pos.coords.latitude,
+    pos.coords.longitude
+  );
+
+  if(d < radio){
+    document.getElementById("estado").innerText = "Podés tocar timbre";
+    document.getElementById("btn").disabled = false;
+  } else {
+    document.getElementById("estado").innerText = "Estás lejos del timbre";
+  }
+});
+
+function tocar(){
+  window.location.href = "https://wa.me/5492392482610?text=Estoy%20en%20la%20puerta";
+}
+</script>
+
+</body>
+</html>
